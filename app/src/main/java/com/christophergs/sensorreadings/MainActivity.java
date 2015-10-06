@@ -15,9 +15,22 @@ import android.text.format.Time;
 import android.widget.Toast;
 import android.os.Handler;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.MalformedURLException;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import java.net.URLConnection;
 
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
@@ -32,13 +45,77 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private TimerTask mTt1;
     private Handler mTimerHandler = new Handler();
 
+
+    public void connect(View view) {
+        toastIt("Attempting to open http connection");
+        URL url;
+        HttpURLConnection urlConnection = null;
+
+        try {
+            //Connect
+            url = new URL("http://christophergs.pythonanywhere.com/csv");
+            urlConnection = (HttpURLConnection) url
+                    .openConnection();
+            InputStream in = urlConnection.getInputStream();
+
+            InputStreamReader isw = new InputStreamReader(in);
+
+            int data = isw.read();
+
+            while (data != -1){
+                char current = (char) data;
+                data = isw.read();
+                System.out.print(current);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                urlConnection.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void stopTimer(View view){
         if(mTimer1 != null){
             mTimer1.cancel();
             mTimer1.purge();
             toastIt("Data saving stopped");
         }
+
+        toastIt("Attempting to open http connection");
+        URL url;
+        HttpURLConnection urlConnection = null;
+
+        try {
+            //Connect
+            url = new URL("http://christophergs.pythonanywhere.com/csv");
+            urlConnection = (HttpURLConnection) url
+                    .openConnection();
+            InputStream in = urlConnection.getInputStream();
+
+            InputStreamReader isw = new InputStreamReader(in);
+
+            int data = isw.read();
+
+            while (data != -1){
+                char current = (char) data;
+                data = isw.read();
+                System.out.print(current);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                urlConnection.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
+
 
     public void startTimer(View view){
         toastIt("Data being saved to csv...");
@@ -69,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         };
 
         mTimer1.schedule(mTt1, 0, 10);
+
     }
 
     @Override
